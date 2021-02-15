@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="billy_v2" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <link name="base_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_base_link.stl"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_base_link.stl"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+    <gazebo reference="base_link">
+      <material>Gazebo/White</material>
+    </gazebo>
+
+
+    <joint name="joint1_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="base_link"/>
+      <child link="joint1_link" />
+      <axis xyz="0 0 1"/>
+      <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
+    </joint>
+
+    <link name="joint1_link">
+      <visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint1.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint1.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="10"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+
+    <transmission name="trans_joint1_link">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint1_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ac_joint1_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <!--gazebo reference="joint1_link">
+      <material>Gazebo/Grey</material>
+    </gazebo-->
+
+
+    <joint name="joint2_joint" type="revolute">
+      <origin xyz="0.1 0 0.12" rpy="0 0 0"/>
+      <parent link="joint1_link"/>
+      <child link="joint2_link" />
+      <axis xyz="0 0 1"/>
+      <limit effort="1000.0" lower="-2.8" upper="2.8" velocity="0.5"/>
+    </joint>
+
+    <link name="joint2_link">
+      <visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint2.stl"/>
+        </geometry>
+        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint2.stl"/>
+        </geometry>
+        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+
+    <transmission name="trans_joint2_link">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint2_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ac_joint2_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <gazebo reference="joint2_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <joint name="joint3_joint" type="prismatic">
+      <origin xyz="0.1 0 0.06" rpy="0 0 0" />
+      <parent link="joint2_link"/>
+      <child link="joint3_link" />
+      <axis xyz="0 0 1"/>
+      <limit effort="1000.0" lower="0" upper="0.06" velocity="0.5"/>
+    </joint>
+    <link name="joint3_link">
+      <visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint3.stl"/>
+        </geometry>
+        <origin xyz="-0.20 0 -0.18" rpy="0 0 0"/> 
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint3.stl"/>
+        </geometry>
+        <origin xyz="-0.20 0 -0.18" rpy="0 0 0"/> 
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+
+    <transmission name="trans_joint3_link">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint3_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ac_joint3_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <gazebo reference="joint3_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <!-- Plugins -->
+    <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      </plugin>
+      <!--robotNamespace>/rms</robotNamespace>
+      <robotParam>/rms/robot_description</robotParam-->
+    </gazebo>
+
+</robot>
