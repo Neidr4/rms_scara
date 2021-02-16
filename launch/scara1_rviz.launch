@@ -1,18 +1,37 @@
 <?xml version="1.0"?>
 <launch>
- 
-  <!-- param name="robot_description" command="cat '$(find billy_ros)/src/billy_description/urdf/myfirst.urdf'"/ -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find rms_scara)/urdf/scara1.xacro'"/>
- 
-  <!-- send fake joint values -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="True"/>
-  </node>
 
-  <!-- Show in Rviz   -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rms_scara)/config/config.rviz"/>
+  <group ns="/rms">
+    <!-- param name="robot_description" command="cat '$(find billy_ros)/src/billy_description/urdf/myfirst.urdf'"/ -->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find rms_scara)/urdf/scara1.xacro'"/>
+   
+    <!-- send fake joint values -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+      <param name="use_gui" value="True"/>
+    </node>
+
+    <!-- Show in Rviz   -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rms_scara)/config/config.rviz"/>
+   
+    <!-- Combine joint values -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+
+    <!-- Load Controller -->
+          <rosparam command="load" file="$(find rms_scara)/config/scara1.yaml"/>
+
+    <!-- Controler -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        respawn="false" output="screen" ns="/rms"
+        args="--namespace=/rms
+        joint_state_controller
+        joint1_position_controller
+        joint2_position_controller
+        joint3_position_controller
+        --timeout 60">
+    </node>
+        
+  </group>
  
-  <!-- Combine joint values -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+  
  
 </launch>
