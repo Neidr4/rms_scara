@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="rms_scara" type="scara0.py" name="scara0_node" output="screen">
+    </node>
+</launch>
