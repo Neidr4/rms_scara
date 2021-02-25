@@ -69,7 +69,7 @@
     </transmission>
 
     <gazebo reference="joint1_link">
-      <material>Gazebo/Grey</material>
+      <material>Gazebo/Yellow</material>
     </gazebo>
 
 
@@ -115,7 +115,7 @@
     </transmission>
 
     <gazebo reference="joint2_link">
-      <material>Gazebo/Grey</material>
+      <material>Gazebo/Orange</material>
     </gazebo>
 
     <joint name="joint3_joint" type="prismatic">
@@ -159,7 +159,7 @@
     </transmission>
 
     <gazebo reference="joint3_link">
-      <material>Gazebo/Grey</material>
+      <material>Gazebo/Red</material>
     </gazebo>
 
     <!-- Plugins -->
