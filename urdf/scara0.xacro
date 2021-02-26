@@ -74,7 +74,7 @@
 
 
     <joint name="joint2_joint" type="revolute">
-      <origin xyz="0.11 0 0.12" rpy="0 0 0"/>
+      <origin xyz="0.11 0 0.27" rpy="0 0 0"/>
       <parent link="joint1_link"/>
       <child link="joint2_link" />
       <axis xyz="0 0 1"/>
@@ -117,6 +117,34 @@
     <gazebo reference="joint2_link">
       <material>Gazebo/Orange</material>
     </gazebo>
+
+    <joint name="cam_joint" type="fixed">
+      <origin xyz="0.13 0 0.1" rpy="0 1.7 0" />
+      <parent link="joint2_link"/>
+      <child link="cam_link" />
+    </joint>
+
+    <link name="cam_link">
+      <!--visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint2.stl"/>
+        </geometry>
+        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint2.stl"/>
+        </geometry>
+        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial-->
+    </link>
 
     <joint name="joint3_joint" type="prismatic">
       <origin xyz="0.1 0 0.06" rpy="0 0 0" />
@@ -162,12 +190,166 @@
       <material>Gazebo/Red</material>
     </gazebo>
 
+    <joint name="gripper_main_joint" type="fixed">
+      <origin xyz="-0.03 0 -0.146" rpy="0 0 1.57" />
+      <parent link="joint3_link"/>
+      <child link="gripper_main_link" />
+    </joint>
+    <link name="gripper_main_link">
+      <visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_gripper_main.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_gripper_main.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+
+    <gazebo reference="gripper_main_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+
+    <joint name="gripper_right_joint" type="prismatic">
+      <origin xyz="-0.01 0 0" rpy="0 0 0" />
+      <parent link="gripper_main_link"/>
+      <child link="gripper_right_link" />
+      <axis xyz="1 0 0"/>
+      <limit effort="1000.0" lower="0" upper="0.02" velocity="0.001"/>
+    </joint>
+    <link name="gripper_right_link">
+      <visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_gripper_right.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_gripper_right.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+
+    <transmission name="trans_gripper_right_link">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="gripper_right_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ac_gripper_right_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <gazebo reference="gripper_right_link">
+      <material>Gazebo/Purple</material>
+    </gazebo>
+
+    <joint name="gripper_left_joint" type="prismatic">
+      <origin xyz="0.01 0 0" rpy="0 0 0" />
+      <parent link="gripper_main_link"/>
+      <child link="gripper_left_link" />
+      <axis xyz="1 0 0"/>
+      <limit effort="1000.0" lower="-0.02" upper="0" velocity="0.001"/>
+    </joint>
+    <link name="gripper_left_link">
+      <visual>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_gripper_left.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </visual>
+      <collision>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_gripper_left.stl"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+    </link>
+
+    <transmission name="trans_gripper_left_link">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="gripper_left_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ac_gripper_left_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <gazebo reference="gripper_left_link">
+      <material>Gazebo/Purple</material>
+    </gazebo>
+
+
     <!-- Plugins -->
+
+    <!--Control -->
     <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       </plugin>
       <robotNamespace>/rms</robotNamespace>
       <robotParam>/rms/robot_description</robotParam>
+    </gazebo>
+
+    <!-- Camera -->
+    <gazebo reference="cam_link"><sensor type="camera" name="myCam">
+      <update_rate>30.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.04</horizontal_fov>
+        <image>
+          <width>720</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>50</far>
+        </clip>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0</updateRate>
+        <cameraName>camera1</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+      </sensor>
     </gazebo>
 
 </robot>

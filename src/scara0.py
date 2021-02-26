@@ -26,11 +26,15 @@ class Robot:
         self.pub_joint1 = rospy.Publisher("/rms/joint1_position_controller/command", Float64, queue_size=1)
         self.pub_joint2 = rospy.Publisher("/rms/joint2_position_controller/command", Float64, queue_size=1)
         self.pub_joint3 = rospy.Publisher("/rms/joint3_position_controller/command", Float64, queue_size=1)
+        self.pub_gripper_right = rospy.Publisher("/rms/gripper_right_position_controller/command", Float64, queue_size=1)
+        self.pub_gripper_left = rospy.Publisher("/rms/gripper_left_position_controller/command", Float64, queue_size=1)
         #self.cmd_vel_pub = rospy.Publisher("/cmd_vel", Int32, queue_size=1)
 
         self.joint1 = Float64()
         self.joint2 = Float64()
         self.joint3 = Float64()
+        self.gripper_right = Float64()
+        self.gripper_left = Float64()
 
         self.j1_flag = 0
         self.j2_flag = 0
@@ -153,17 +157,50 @@ class Robot:
 
     def pick(self):
         print("Picking")
-        self.joint3.data = 0.05
-        self.pub_joint3.publish(self.joint3)
+        
+        self.gripper_right.data = 0.02
+        self.gripper_left.data = -0.02
+        self.pub_gripper_right.publish(self.gripper_right)
+        self.pub_gripper_left.publish(self.gripper_left)
         rospy.sleep(0.5)
 
         self.joint3.data = 0.0
         self.pub_joint3.publish(self.joint3)
         rospy.sleep(0.5)
 
+        self.gripper_right.data = 0.0
+        self.gripper_left.data = 0.0
+        self.pub_gripper_right.publish(self.gripper_right)
+        self.pub_gripper_left.publish(self.gripper_left)
+        rospy.sleep(0.5)
+
         self.joint3.data = 0.05
         self.pub_joint3.publish(self.joint3)
         rospy.sleep(0.5)
+
+    def place(self):
+        print("Placing")
+
+        self.gripper_right.data = 0.0
+        self.gripper_left.data = 0.0
+        self.pub_gripper_right.publish(self.gripper_right)
+        self.pub_gripper_left.publish(self.gripper_left)
+        rospy.sleep(0.5)
+
+        self.joint3.data = 0.0
+        self.pub_joint3.publish(self.joint3)
+        rospy.sleep(0.5)
+
+        self.gripper_right.data = 0.02
+        self.gripper_left.data = -0.02
+        self.pub_gripper_right.publish(self.gripper_right)
+        self.pub_gripper_left.publish(self.gripper_left)
+        rospy.sleep(0.5)
+
+        self.joint3.data = 0.05
+        self.pub_joint3.publish(self.joint3)
+        rospy.sleep(0.5)
+        
 
     def routine(self):
         basic_pause = 1
@@ -200,7 +237,7 @@ class Robot:
             self.last_item = -1
             
         rospy.sleep(basic_pause)
-        self.pick()
+        self.place()
 
     def basic_quadrant_ckeck(self):
         print("\nPerforming Quadrant Check")
@@ -249,6 +286,10 @@ class Robot:
         self.pub_joint2.publish(self.joint2)
         self.joint3.data = 0.0
         self.pub_joint3.publish(self.joint3)
+        self.gripper_right.data = 0.0
+        self.pub_gripper_left.publish(self.gripper_right)
+        self.gripper_left.data = 0.0
+        self.pub_gripper_left.publish(self.gripper_left)
 
     def shutdown_function(self):
         self.joint1.data = 0.0
@@ -257,6 +298,10 @@ class Robot:
         self.pub_joint2.publish(self.joint2)
         self.joint3.data = 0.0
         self.pub_joint3.publish(self.joint3)
+        self.gripper_right.data = 0.0
+        self.pub_gripper_left.publish(self.gripper_right)
+        self.gripper_left.data = 0.0
+        self.pub_gripper_left.publish(self.gripper_left)
     
 if __name__ == '__main__':
     rospy.init_node('scara0_node')
