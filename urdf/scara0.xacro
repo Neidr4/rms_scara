@@ -28,7 +28,7 @@
 
 
     <joint name="joint1_joint" type="revolute">
-      <origin xyz="0 0 0" rpy="0 0 0" />
+      <origin xyz="0 0 0.01" rpy="0 0 0" />
       <parent link="base_link"/>
       <child link="joint1_link" />
       <axis xyz="0 0 1"/>
@@ -74,7 +74,7 @@
 
 
     <joint name="joint2_joint" type="revolute">
-      <origin xyz="0.11 0 0.27" rpy="0 0 0"/>
+      <origin xyz="0.2 0 0.147" rpy="0 0 0"/>
       <parent link="joint1_link"/>
       <child link="joint2_link" />
       <axis xyz="0 0 1"/>
@@ -86,13 +86,13 @@
         <geometry>
          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint2.stl"/>
         </geometry>
-        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
       </visual>
       <collision>
         <geometry>
          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint2.stl"/>
         </geometry>
-        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
       </collision>
       <inertial>
         <origin xyz="0.0 0 0"/>
@@ -119,7 +119,7 @@
     </gazebo>
 
     <joint name="cam_joint" type="fixed">
-      <origin xyz="0.13 0 0.1" rpy="0 1.7 0" />
+      <origin xyz="0.3 0 0.1" rpy="0 2.0 0" />
       <parent link="joint2_link"/>
       <child link="cam_link" />
     </joint>
@@ -147,24 +147,24 @@
     </link>
 
     <joint name="joint3_joint" type="prismatic">
-      <origin xyz="0.1 0 0.06" rpy="0 0 0" />
+      <origin xyz="0.2 0 0.1" rpy="0 0 0" />
       <parent link="joint2_link"/>
       <child link="joint3_link" />
       <axis xyz="0 0 1"/>
-      <limit effort="1000.0" lower="0" upper="0.06" velocity="0.01"/>
+      <limit effort="1000.0" lower="0" upper="0.1" velocity="0.01"/>
     </joint>
     <link name="joint3_link">
       <visual>
         <geometry>
          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint3.stl"/>
         </geometry>
-        <origin xyz="-0.20 0 -0.18" rpy="0 0 0"/> 
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
       </visual>
       <collision>
         <geometry>
          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara0/scara0_joint3.stl"/>
         </geometry>
-        <origin xyz="-0.20 0 -0.18" rpy="0 0 0"/> 
+        <origin xyz="0 0 0" rpy="0 0 0"/> 
       </collision>
       <inertial>
         <origin xyz="0.0 0 0"/>
@@ -191,7 +191,7 @@
     </gazebo>
 
     <joint name="gripper_main_joint" type="fixed">
-      <origin xyz="-0.03 0 -0.146" rpy="0 0 1.57" />
+      <origin xyz="-0.025 0 -0.205" rpy="0 0 1.57" />
       <parent link="joint3_link"/>
       <child link="gripper_main_link" />
     </joint>
