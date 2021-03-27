@@ -56,6 +56,7 @@ class Robot:
         self.image_raw_sub = Image()
         self.image_rows = 10        #Those values are update at launch of the script
         self.image_columns = 10
+        self.tolerance = 50
         self.img_result = Image()
         self.mask = Image()
         self.image_counter = 0
@@ -88,63 +89,84 @@ class Robot:
     def callback_cam(self, image_raw):
         self.image_raw_sub = image_raw
 
-    def image_processing(self):
+    def image_processing(self, color_lower, color_upper):
         print("inside image_processing")
-        object_has_been_detected = False
+        color = False
         self.mask_pixel_first = (0, 0)
         self.mask_pixel_middle = (0, 0)
         self.mask_pixel_last = (0, 0)
         #cv2_image = self.bridge.imgmsg_to_cv2(self.image_raw_sub, desired_encoding='bgr8')
 
-        while(self.mask_pixel_middle > (int(self.image_columns/2)+50) or self.mask_pixel_middle < (int(self.image_columns/2)-50) ):
-            print("inside while loop")
+        #Do the color check one time
+        #Retreive image and convert it to opencv
+        cv2_image = self.bridge.imgmsg_to_cv2(self.image_raw_sub, desired_encoding='bgr8')
+        #Transforming color to HSV
+        hsv = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2HSV)
+        #Detection of color in hsv image
+        self.mask = cv2.inRange(hsv, color_lower, color_upper)
 
-            cv2_image = self.bridge.imgmsg_to_cv2(self.image_raw_sub, desired_encoding='bgr8')
+        #Image display
+        cv2.imshow("mask", self.mask)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-            #Transforming color to HSV
-            hsv = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2HSV)
-
-            #Image processing
-            #self.mask = cv2.inRange(hsv, self.green_lower, self.green_upper)
-            self.mask = cv2.inRange(hsv, self.blue_lower, self.blue_upper)
-
-            #Image display
-            '''
-            #cv2.imshow("cv2_image", cv2_image)
-            #cv2.imshow("hsv", hsv)
-            cv2.imshow("mask", self.mask)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            '''
-
-            for i in range(self.image_rows):
+        #Detection of pixel of color in mask image
+        for i in range(self.image_rows):
                 for j in range(self.image_columns):
                     
                     if(self.mask[i, j]) != 0:
-                        if(self.mask_pixel_first == (0, 0)):
-                            self.mask_pixel_first = (i, j)
-                            object_has_been_detected = True
+                        color = True
 
-                        self.mask_pixel_last =(i, j)
+        #if color has been detected, alignment process starts
+        if(color == True):
+            #While first pixel detect and last pixel detected are not in the center of the image 
+            while( (self.mask_pixel_middle > (int(self.image_columns/2)+self.tolerance)) or (self.mask_pixel_middle < (int(self.image_columns/2)-self.tolerance)) ):
+                print("inside while loop")
 
-            print("self.mask_pixel_first is: " + str(self.mask_pixel_first))
-            print("self.mask_pixel_last is: " + str(self.mask_pixel_last))
+                #Retreive image and convert it to opencv
+                cv2_image = self.bridge.imgmsg_to_cv2(self.image_raw_sub, desired_encoding='bgr8')
+                #Transforming color to HSV
+                hsv = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2HSV)
+                #Detection of color in hsv image
+                self.mask = cv2.inRange(hsv, color_lower, color_upper)
 
-            self.mask_pixel_middle = int( (self.mask_pixel_first[1] + self.mask_pixel_last[1]) / 2)
-            print("self.mask_pixel_middle is: " +str(self.mask_pixel_middle))
+                #Image display
+                
+                #cv2.imshow("cv2_image", cv2_image)
+                #cv2.imshow("hsv", hsv)
+                cv2.imshow("mask", self.mask)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+                
 
-            if(self.mask_pixel_middle < 300):
-                self.joint2.data += 0.1
-                self.pub_joint2.publish(self.joint2)
-                rospy.sleep(0.5)
+                for i in range(self.image_rows):
+                    for j in range(self.image_columns):
+                        
+                        if(self.mask[i, j]) != 0:
+                            if(self.mask_pixel_first == (0, 0)):
+                                self.mask_pixel_first = (i, j)
 
-            if(self.mask_pixel_middle > 400):
-                self.joint2.data -= 0.1
-                self.pub_joint2.publish(self.joint2)
-                rospy.sleep(0.5)
+                            self.mask_pixel_last =(i, j)
 
-        print("Is object_has_been_detected = " + str(object_has_been_detected))
-        return object_has_been_detected
+                print("self.mask_pixel_first is: " + str(self.mask_pixel_first))
+                print("self.mask_pixel_last is: " + str(self.mask_pixel_last))
+
+                self.mask_pixel_middle = int( (self.mask_pixel_first[1] + self.mask_pixel_last[1]) / 2)
+                print("self.mask_pixel_middle is: " +str(self.mask_pixel_middle))
+
+                if(self.mask_pixel_middle < (int(self.image_columns/2)-self.tolerance) ):
+                    self.joint2.data += 0.1
+                    self.pub_joint2.publish(self.joint2)
+                    rospy.sleep(0.5)
+
+                if(self.mask_pixel_middle > (int(self.image_columns/2)+self.tolerance) ):
+                    self.joint2.data -= 0.1
+                    self.pub_joint2.publish(self.joint2)
+                    rospy.sleep(0.5)
+
+            print("Is object_has_been_detected = " + str(color))
+        
+        return color
 
         #Transforming color to BGR
         #cv2_image_result = cv2.cvtColor(self.mask, cv2.COLOR_HSV2BGR)
@@ -359,9 +381,9 @@ class Robot:
         self.last_item += 1
         print("\n-------------- New Item " + str(self.last_item) + " ----------------")
         print("Image processing: allign with object if color is detected")
-        bonsoir = self.image_processing()
+        object_has_been_detected = self.image_processing(self.blue_lower, self.blue_upper)
 
-        if(bonsoir == True):
+        if(object_has_been_detected == True):
             self.pick()
             self.inverse_kinematic2(0.1, 0.1)
             rospy.sleep(basic_pause)
@@ -371,10 +393,66 @@ class Robot:
 
         rospy.sleep(basic_pause)
 
+    def routine3(self):
+        basic_pause = 3
+        basic_position = 0.1
+        self.last_item += 1
+
+        self.joint3.data = 0.05
+        self.pub_joint3.publish(self.joint3)
+        rospy.sleep(0.5)
+
+        print("\n-------------- New Item " + str(self.last_item) + " ----------------")
+
+        if(self.last_item == 0):
+            self.inverse_kinematic2(basic_position, basic_position)
+            rospy.sleep(basic_pause)
+            if(self.image_processing(self.blue_lower, self.blue_upper)):
+                self.pick()
+                self.inverse_kinematic2(-basic_position, -basic_position)
+                rospy.sleep(basic_pause)
+                self.place()
+            else:
+                print("No object detected")
+            
+        if(self.last_item == 1):
+            self.inverse_kinematic2(-basic_position, basic_position)
+            rospy.sleep(basic_pause)
+            if(self.image_processing(self.blue_lower, self.blue_upper)):
+                self.pick()
+                self.inverse_kinematic2(basic_position, -basic_position)
+                rospy.sleep(basic_pause)
+                self.place()
+            else:
+                print("No object detected")
+
+        if(self.last_item == 2):
+            self.inverse_kinematic2(-basic_position, -basic_position)
+            rospy.sleep(basic_pause)
+            if(self.image_processing(self.blue_lower, self.blue_upper)):
+                self.pick()
+                self.inverse_kinematic2(basic_position, basic_position)
+                rospy.sleep(basic_pause)
+                self.place()
+            else:
+                print("No object detected")
+
+        if(self.last_item == 3):
+            self.inverse_kinematic2(basic_position, -basic_position)
+            rospy.sleep(basic_pause)
+            self.last_item = -1
+            if(self.image_processing(self.blue_lower, self.blue_upper)):
+                self.pick()
+                self.inverse_kinematic2(-basic_position, basic_position)
+                rospy.sleep(basic_pause)
+                self.place()
+            else:
+                print("No object detected")
+        
     def basic_quadrant_ckeck(self):
         print("\nPerforming Quadrant Check")
 
-        basic_pause = 1
+        basic_pause = 5
         x = 0.1
         y = 0.1
         print("\nFrist Quadrant")
@@ -444,7 +522,7 @@ class Robot:
         self.pub_joint1.publish(self.joint1)
         self.joint2.data = 0.0
         self.pub_joint2.publish(self.joint2)
-        self.joint3.data = 0.0
+        self.joint3.data = 0.5
         self.pub_joint3.publish(self.joint3)
         self.gripper_right.data = 0.0
         self.pub_gripper_left.publish(self.gripper_right)
@@ -467,7 +545,7 @@ if __name__ == '__main__':
         #scara0.wave()
         #scara0.basic_xy_ckeck()
         #scara0.basic_quadrant_ckeck()
-        scara0.routine2()
+        scara0.routine3()
         #scara0.image_processing()
     
     try:

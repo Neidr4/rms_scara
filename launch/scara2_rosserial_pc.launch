@@ -1,0 +1,11 @@
+<launch>
+
+    <!-- node pkg="rms_scara" type="scara2_rosserial_pc.py" name="scara2_rosserial_pc_node" output="screen">
+    </node -->
+
+    <node pkg="rosserial_python" type="serial_node.py" name="scara0_serial_node" output="screen">
+    <param name="port" value="/dev/ttyACM0" />
+    <param name="baud" value="57600" />
+    </node>
+
+</launch>
