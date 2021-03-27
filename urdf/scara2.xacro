@@ -10,7 +10,7 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="1.5707 0 3.1416"/>
         <geometry>
           <mesh scale="0.010 0.010 0.010" filename="package://rms_scara/meshes/scara2/scara2_base_link.stl"/>
         </geometry>
@@ -30,7 +30,7 @@
     <!-- ____________________ Shafts and screw ____________________ -->
 
     <joint name="shaft1_joint" type="fixed">
-      <origin xyz="0.016 0.01 0.028" rpy="0 0 0" />
+      <origin xyz="0.0175 0.005 0.0303" rpy="0 0 0" />
       <parent link="joint2_link"/>
       <child link="shaft1_link" />
     </joint>
@@ -58,7 +58,7 @@
     </link>
 
     <joint name="shaft2_joint" type="fixed">
-      <origin xyz="-0.035 0.01 0" rpy="0 0 0" />
+      <origin xyz="-0.035 0.005 0" rpy="0 0 0" />
       <parent link="joint2_link"/>
       <child link="shaft2_link" />
     </joint>
@@ -86,7 +86,7 @@
     </link>
 
     <joint name="shaft3_joint" type="fixed">
-      <origin xyz="0.016 0.01 -0.028" rpy="0 0 0" />
+      <origin xyz="0.0175 0.01 -0.0303" rpy="0 0 0" />
       <parent link="joint2_link"/>
       <child link="shaft3_link" />
     </joint>
@@ -113,6 +113,7 @@
       </inertial>
     </link>
 
+    <!--
     <joint name="screw_joint" type="fixed">
       <origin xyz="0.045 0 0" rpy="0 0 0" />
       <parent link="joint2_link"/>
@@ -140,11 +141,12 @@
                  izz="0.03"/>
       </inertial>
     </link>
+    -->
 
     <!-- ____________________ Hat ____________________ -->
 
     <joint name="top_joint" type="fixed">
-      <origin xyz="0 0.4 0" rpy="0 2.09 0" />
+      <origin xyz="0 0.41 0" rpy="0 3.141 3.14" />
       <parent link="joint2_link"/>
       <child link="top_link" />
     </joint>
@@ -174,11 +176,11 @@
     <!-- ____________________ Joints ____________________ -->
 
     <joint name="joint1_joint" type="prismatic">
-      <origin xyz="0 0.035 0" rpy="0 0 0" />
+      <origin xyz="0 0.115 0" rpy="0 0.523 0" />
       <parent link="joint2_link"/>
       <child link="joint1_link" />
       <axis xyz="0 1 0"/>
-      <limit effort="1000.0" lower="0" upper="1" velocity="0.5"/>
+      <limit effort="1000.0" lower="0.0" upper="0.26" velocity="0.2"/>
     </joint>
 
     <link name="joint1_link">
@@ -224,7 +226,7 @@
       <parent link="base_link"/>
       <child link="joint2_link" />
       <axis xyz="0 1 0"/>
-      <limit effort="1000.0" lower="-2.80" upper="2.80" velocity="0.5"/>
+      <limit effort="1000.0" lower="-2.80" upper="2.80" velocity="0.2"/>
     </joint>
 
     <link name="joint2_link">
@@ -264,42 +266,12 @@
       <material>Gazebo/Orange</material>
     </gazebo>
 
-
-    <joint name="cam_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <parent link="joint2_link"/>
-      <child link="cam_link" />
-    </joint> 
-
-    <link name="cam_link">
-      <!--visual>
-        <geometry>
-         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_joint2.stl"/>
-        </geometry>
-        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
-      </visual>
-      <collision>
-        <geometry>
-         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_joint2.stl"/>
-        </geometry>
-        <origin xyz="-0.1 0 -0.12" rpy="0 0 0"/>
-      </collision>
-      <inertial>
-        <origin xyz="0.0 0 0"/>
-        <mass value="0.5"/>
-        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
-                 iyy="0.01" iyz="0.0" 
-                 izz="0.03"/>
-      </inertial-->
-    </link>
-
-
     <joint name="joint3_joint" type="revolute">
-      <origin xyz="0 -0.035 -0.15" rpy="0 0 0" />
+      <origin xyz="0 -0.035 -0.15" rpy="3.14 3.14 0" />
       <parent link="joint1_link"/>
       <child link="joint3_link" />
       <axis xyz="0 1 0"/>
-      <limit effort="1000.0" lower="-2.8" upper="2.8" velocity="0.5"/>
+      <limit effort="1000.0" lower="-2.8" upper="2.8" velocity="0.1"/>
     </joint>
     <link name="joint3_link">
       <visual>
@@ -338,9 +310,11 @@
       <material>Gazebo/Red</material>
     </gazebo>
 
-    <!--
+    <!-- ____________________ Gripper ____________________ -->
+
+    
     <joint name="gripper_main_joint" type="fixed">
-      <origin xyz="-0.025 0 -0.205" rpy="0 0 1.57" />
+      <origin xyz="0 0.070 -0.12" rpy="-1.57 3.14 3.14" />
       <parent link="joint3_link"/>
       <child link="gripper_main_link" />
     </joint>
@@ -369,24 +343,24 @@
     <gazebo reference="gripper_main_link">
       <material>Gazebo/Red</material>
     </gazebo>
-
+    
     <joint name="gripper_right_joint" type="prismatic">
-      <origin xyz="-0.01 0 0" rpy="0 0 0" />
+      <origin xyz="0.0078 -0.01 -0.05" rpy="1.57 0 0" />
       <parent link="gripper_main_link"/>
       <child link="gripper_right_link" />
       <axis xyz="1 0 0"/>
-      <limit effort="1000.0" lower="0" upper="0.02" velocity="0.001"/>
+      <limit effort="1000.0" lower="0" upper="0.025" velocity="0.1"/>
     </joint>
     <link name="gripper_right_link">
       <visual>
         <geometry>
-         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_right.stl"/>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_right_2.stl"/>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/> 
       </visual>
       <collision>
         <geometry>
-         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_right.stl"/>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_right_2.stl"/>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/> 
       </collision>
@@ -414,23 +388,24 @@
       <material>Gazebo/Purple</material>
     </gazebo>
 
+    
     <joint name="gripper_left_joint" type="prismatic">
-      <origin xyz="0.01 0 0" rpy="0 0 0" />
+      <origin xyz="-0.0078 -0.05 -0.05" rpy="1.57 0 3.14" />
       <parent link="gripper_main_link"/>
       <child link="gripper_left_link" />
       <axis xyz="1 0 0"/>
-      <limit effort="1000.0" lower="-0.02" upper="0" velocity="0.001"/>
+      <limit effort="1000.0" lower="0" upper="0.025" velocity="0.1"/>
     </joint>
     <link name="gripper_left_link">
       <visual>
         <geometry>
-         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_left.stl"/>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_left_2.stl"/>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/> 
       </visual>
       <collision>
         <geometry>
-         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_left.stl"/>
+         <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_left_2.stl"/>
         </geometry>
         <origin xyz="0 0 0" rpy="0 0 0"/> 
       </collision>
@@ -458,11 +433,39 @@
       <material>Gazebo/Purple</material>
     </gazebo>
 
-    -->
+    <!-- ____________________ Camera ____________________ -->
 
-    <!-- Plugins -->
+    <joint name="cam_joint" type="fixed">
+      <origin xyz="0 -0.12 0.15" rpy="0 2.0 -1.57"/>
+      <parent link="gripper_main_link"/>
+      <child link="cam_link" />
+    </joint> 
 
-    <!--Control -->
+    <link name="cam_link">
+      <!-- 
+      <visual>
+        <geometry>
+          <cylinder length="0.01" radius="0.01"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder length="0.1" radius="0.1"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                 iyy="0.01" iyz="0.0" 
+                 izz="0.03"/>
+      </inertial>
+      -->
+    </link>
+
+    <!-- ____________________ Plugins ____________________ -->
     <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       </plugin>
@@ -471,7 +474,6 @@
     </gazebo>
 
     <!-- Camera -->
-    <!--
     <gazebo reference="cam_link"><sensor type="camera" name="myCam">
       <update_rate>30.0</update_rate>
       <camera name="head">
@@ -502,6 +504,5 @@
       </plugin>
       </sensor>
     </gazebo>
-    -->
 
 </robot>

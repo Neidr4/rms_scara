@@ -33,7 +33,7 @@
     </group>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find rms_scara)/worlds/quadrant_pens_0.world"/>
+        <arg name="world_name" value="$(find rms_scara)/worlds/2b_1g_pens_world_3.world"/>
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>
