@@ -32,6 +32,7 @@ class Robot:
         self.pub_joint2 = rospy.Publisher("/rms/joint2_position_controller/command", Float64, queue_size=1)
         self.pub_joint3 = rospy.Publisher("/rms/joint3_position_controller/command", Float64, queue_size=1)
         self.pub_joint1 = rospy.Publisher("/rms/joint1_position_controller/command", Float64, queue_size=1)
+        self.pub_gripper_main = rospy.Publisher("/rms/gripper_main_position_controller/command", Float64, queue_size=1)
         self.pub_gripper_right = rospy.Publisher("/rms/gripper_right_position_controller/command", Float64, queue_size=1)
         self.pub_gripper_left = rospy.Publisher("/rms/gripper_left_position_controller/command", Float64, queue_size=1)
         self.image_pub = rospy.Publisher("/image_processed",Image, queue_size=1)
@@ -39,6 +40,7 @@ class Robot:
         self.joint2 = Float64()
         self.joint3 = Float64()
         self.joint1 = Float64()
+        self.gripper_main = Float64()
         self.gripper_right = Float64()
         self.gripper_left = Float64()
 
@@ -102,6 +104,7 @@ class Robot:
         self.mask_pixel_first = (0, 0)
         self.mask_pixel_middle = (0, 0)
         self.mask_pixel_last = (0, 0)
+
         #cv2_image = self.bridge.imgmsg_to_cv2(self.image_raw_sub, desired_encoding='bgr8')
 
         #Do the color check one time
@@ -165,16 +168,32 @@ class Robot:
                 print("self.mask_pixel_middle is: " +str(self.mask_pixel_middle))
 
                 if(self.mask_pixel_middle < abs(int(self.image_columns/2)-self.tolerance) ):
-                    self.joint3.data -= 0.1
-                    self.pub_joint3.publish(self.joint3)
-                    rospy.sleep(0.2)
-
-                if(self.mask_pixel_middle > abs(int(self.image_columns/2)+self.tolerance) ):
                     self.joint3.data += 0.1
                     self.pub_joint3.publish(self.joint3)
                     rospy.sleep(0.2)
 
+                if(self.mask_pixel_middle > abs(int(self.image_columns/2)+self.tolerance) ):
+                    self.joint3.data -= 0.1
+                    self.pub_joint3.publish(self.joint3)
+                    rospy.sleep(0.2)
+
             print("Is object_has_been_detected = " + str(color))
+
+        if (self.mask_pixel_middle != (0, 0)):
+            #adjacent = max(self.mask_pixel_first[1], self.mask_pixel_last[1]) - min(self.mask_pixel_first[1], self.mask_pixel_last[1])
+            #opposite = max(self.mask_pixel_first[0], self.mask_pixel_last[0]) - min(self.mask_pixel_first[0], self.mask_pixel_last[0])
+            adjacent = max(self.mask_pixel_first[1], self.mask_pixel_last[1]) - min(self.mask_pixel_first[1], self.mask_pixel_last[1])
+            opposite = max(self.mask_pixel_first[0], self.mask_pixel_last[0]) - min(self.mask_pixel_first[0], self.mask_pixel_last[0])
+            angle = math.atan(opposite / adjacent)
+            print("angle = " + str(angle))
+
+            if(self.mask_pixel_first[1] > self.mask_pixel_last[1]):
+                self.gripper_main = 1.57 + angle
+            else:
+                self.gripper_main = 1.57 - angle                
+
+            self.pub_gripper_main.publish(self.gripper_main)
+            rospy.sleep(0.5)
         
         return color
 
@@ -346,6 +365,11 @@ class Robot:
         self.joint1.data = 0.05
         self.pub_joint1.publish(self.joint1)
         rospy.sleep(0.5)
+
+    def align(self, angle):
+        self.gripper_main = angle             
+        self.pub_gripper_main.publish(self.gripper_main)
+        rospy.sleep(0.5)
         
     def routine(self):
         basic_pause = 1
@@ -390,7 +414,7 @@ class Robot:
         basic_pause = 1
         self.last_item += 1
         print("\n-------------- New Item " + str(self.last_item) + " ----------------")
-        print("Image processing: allign with object if color is detected")
+        print("Image processing: align with object if color is detected")
         object_has_been_detected = self.image_processing(self.blue_lower, self.blue_upper)
 
         if(object_has_been_detected == True):
@@ -467,6 +491,7 @@ class Robot:
 
         self.joint1.data = 0.05
         self.pub_joint1.publish(self.joint1)
+        self.align(0.0)
         rospy.sleep(0.5)
 
         print("\n-------------- New Item " + str(self.last_item) + " ----------------")
@@ -477,6 +502,7 @@ class Robot:
             if(self.image_processing(self.blue_lower, self.blue_upper)):
                 self.pick()
                 self.inverse_kinematic2(-basic_position, -basic_position)
+                self.align(0.0)
                 rospy.sleep(basic_pause)
                 self.place()
                 print("Object blue detected")
@@ -489,6 +515,7 @@ class Robot:
             if(self.image_processing(self.blue_lower, self.blue_upper)):
                 self.pick()
                 self.inverse_kinematic2(-basic_position, -basic_position)
+                self.align(0.0)
                 rospy.sleep(basic_pause)
                 self.place()
                 print("Object blue detected")
@@ -498,6 +525,7 @@ class Robot:
             if(self.image_processing(self.green_lower, self.green_upper)):
                 self.pick()
                 self.inverse_kinematic2(basic_position, -basic_position)
+                self.align(0.0)
                 rospy.sleep(basic_pause)
                 self.place()
                 print("Object green detected")
@@ -511,6 +539,7 @@ class Robot:
             if(self.image_processing(self.blue_lower, self.blue_upper)):
                 self.pick()
                 self.inverse_kinematic2(-basic_position, -basic_position)
+                self.align(0.0)
                 rospy.sleep(basic_pause)
                 self.place()
                 print("Object blue detected")
@@ -523,6 +552,7 @@ class Robot:
         basic_pause = 5
         x = 0.15
         y = 0.15
+
         print("\nFrist Quadrant")
         self.inverse_kinematic2(x, y)
         rospy.sleep(basic_pause)
@@ -530,6 +560,16 @@ class Robot:
         self.pick()
         rospy.sleep(basic_pause/2)
         self.place()
+        rospy.sleep(basic_pause/2)
+
+        self.gripper_main = 1.57
+        self.pub_gripper_main.publish(self.gripper_main)
+        rospy.sleep(basic_pause/2)
+        self.gripper_main = 0.0
+        self.pub_gripper_main.publish(self.gripper_main)
+        rospy.sleep(basic_pause/2)
+        self.gripper_main = -1.57
+        self.pub_gripper_main.publish(self.gripper_main)
         rospy.sleep(basic_pause/2)
 
         print("\nSecond Quadrant")
@@ -585,6 +625,8 @@ class Robot:
         self.pub_joint3.publish(self.joint3)
         self.joint1.data = 0.0
         self.pub_joint1.publish(self.joint1)
+        self.gripper_main = 0.0
+        self.pub_gripper_main.publish(self.gripper_main)
         self.gripper_right.data = 0.020
         self.pub_gripper_left.publish(self.gripper_right)
         self.gripper_left.data = 0.020
@@ -597,6 +639,8 @@ class Robot:
         self.pub_joint3.publish(self.joint3)
         self.joint1.data = 0.20
         self.pub_joint1.publish(self.joint1)
+        self.gripper_main = 0.0
+        self.pub_gripper_main.publish(self.gripper_main)
         self.gripper_right.data = 0.0
         self.pub_gripper_left.publish(self.gripper_right)
         self.gripper_left.data = 0.0

@@ -313,23 +313,25 @@
     <!-- ____________________ Gripper ____________________ -->
 
     
-    <joint name="gripper_main_joint" type="fixed">
+    <joint name="gripper_main_joint" type="revolute">
       <origin xyz="0 0.070 -0.12" rpy="-1.57 3.14 3.14" />
       <parent link="joint3_link"/>
       <child link="gripper_main_link" />
+      <axis xyz="0 0 1"/>
+      <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.1"/>
     </joint>
     <link name="gripper_main_link">
       <visual>
         <geometry>
          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_main.stl"/>
         </geometry>
-        <origin xyz="0 0 0" rpy="0 0 0"/> 
+        <origin xyz="0 0.030 0" rpy="0 0 0"/> 
       </visual>
       <collision>
         <geometry>
          <mesh scale="0.001 0.001 0.001" filename="package://rms_scara/meshes/scara2/scara2_gripper_main.stl"/>
         </geometry>
-        <origin xyz="0 0 0" rpy="0 0 0"/> 
+        <origin xyz="0 0.030 0" rpy="0 0 0"/> 
       </collision>
       <inertial>
         <origin xyz="0.0 0 0"/>
@@ -340,12 +342,23 @@
       </inertial>
     </link>
 
+    <transmission name="trans_gripper_main_link">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="gripper_main_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ac_gripper_main_link">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
     <gazebo reference="gripper_main_link">
       <material>Gazebo/Red</material>
     </gazebo>
     
     <joint name="gripper_right_joint" type="prismatic">
-      <origin xyz="0.0078 -0.01 -0.05" rpy="1.57 0 0" />
+      <origin xyz="0.0078 0.018 -0.05" rpy="1.57 0 0" />
       <parent link="gripper_main_link"/>
       <child link="gripper_right_link" />
       <axis xyz="1 0 0"/>
@@ -390,7 +403,7 @@
 
     
     <joint name="gripper_left_joint" type="prismatic">
-      <origin xyz="-0.0078 -0.05 -0.05" rpy="1.57 0 3.14" />
+      <origin xyz="-0.0078 -0.022 -0.05" rpy="1.57 0 3.14" />
       <parent link="gripper_main_link"/>
       <child link="gripper_left_link" />
       <axis xyz="1 0 0"/>
@@ -436,8 +449,8 @@
     <!-- ____________________ Camera ____________________ -->
 
     <joint name="cam_joint" type="fixed">
-      <origin xyz="0 -0.12 0.15" rpy="0 2.0 -1.57"/>
-      <parent link="gripper_main_link"/>
+      <origin xyz="0 -0.05 -0.22" rpy="0 -0.5 1.57"/>
+      <parent link="joint3_link"/>
       <child link="cam_link" />
     </joint> 
 

@@ -17,6 +17,10 @@ joint3_position_controller:
   type: effort_controllers/JointPositionController
   joint: joint3_joint
   pid: {p: 50.0, i: 10.0, d: 10.0}
+gripper_main_position_controller:
+  type: effort_controllers/JointPositionController
+  joint: gripper_main_joint
+  pid: {p: 50.0, i: 10.0, d: 10.0}
 gripper_right_position_controller:
   type: effort_controllers/JointPositionController
   joint: gripper_right_joint

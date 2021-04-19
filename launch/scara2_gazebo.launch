@@ -25,6 +25,7 @@
             joint1_position_controller
             joint2_position_controller
             joint3_position_controller
+            gripper_main_position_controller
             gripper_right_position_controller
             gripper_left_position_controller
             --timeout 60">
@@ -33,7 +34,7 @@
     </group>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find rms_scara)/worlds/2b_1g_pens_world_3.world"/>
+        <arg name="world_name" value="$(find rms_scara)/worlds/2b_1g_pens_world_4.world"/>
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>

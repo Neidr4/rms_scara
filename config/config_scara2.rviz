@@ -126,19 +126,61 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz/TF
-      Enabled: false
+      Enabled: true
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_link:
+          Value: true
+        cam_link:
+          Value: true
+        gripper_left_link:
+          Value: true
+        gripper_main_link:
+          Value: true
+        gripper_right_link:
+          Value: true
+        joint1_link:
+          Value: true
+        joint2_link:
+          Value: true
+        joint3_link:
+          Value: true
+        shaft1_link:
+          Value: true
+        shaft2_link:
+          Value: true
+        shaft3_link:
+          Value: true
+        top_link:
+          Value: true
       Marker Scale: 0.5
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        base_link:
+          joint2_link:
+            joint1_link:
+              joint3_link:
+                cam_link:
+                  {}
+                gripper_main_link:
+                  gripper_left_link:
+                    {}
+                  gripper_right_link:
+                    {}
+            shaft1_link:
+              {}
+            shaft2_link:
+              {}
+            shaft3_link:
+              {}
+            top_link:
+              {}
       Update Interval: 0
-      Value: false
+      Value: true
     - Class: rviz/Image
       Enabled: false
       Image Topic: /rms/camera1/image_raw
@@ -176,25 +218,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.182666332
+      Distance: 0.701415658
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.125985131
-        Y: 0.23171179
-        Z: 0.030900998
+        X: -0.0578508079
+        Y: 0.223056898
+        Z: 0.12115822
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.159797147
+      Pitch: 0.354796708
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.18040228
+      Yaw: 1.01040304
     Saved: ~
 Window Geometry:
   Displays:
@@ -215,4 +257,4 @@ Window Geometry:
     collapsed: true
   Width: 1215
   X: 65
-  Y: 80
+  Y: 24
